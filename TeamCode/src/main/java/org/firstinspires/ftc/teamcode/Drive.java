@@ -10,20 +10,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-/**
- * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When a selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all iterative OpModes contain.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
-
 @TeleOp(name="Drive", group="Iterative Opmode")
 
 public class Drive extends OpMode
@@ -62,7 +48,7 @@ public class Drive extends OpMode
         BackLeft.setDirection(DcMotor.Direction.FORWARD);
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
         BackRight.setDirection(DcMotor.Direction.REVERSE);
-        Slide.setDirection(DcMotor.Direction.FORWARD);
+        Slide.setDirection(DcMotor.Direction.REVERSE);
 
         FrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -120,10 +106,10 @@ public class Drive extends OpMode
         double turn  =  -gamepad1.right_stick_x;
         double drive = -gamepad1.left_stick_x;
 
-        double frontLeftPower = Range.clip(drive + turn + strafe, -1.0, 1.0) * 0.8;
-        double frontRightPower = Range.clip(drive - turn - strafe, -1.0, 1.0) * 0.8;
-        double backLeftPower = Range.clip(drive + turn - strafe, -1.0, 1.0) * 0.8;
-        double backRightPower = Range.clip(drive - turn + strafe, -1.0, 1.0) * 0.8;
+        double frontLeftPower = Range.clip(drive + turn + strafe, -1.0, 1.0) * 0.6;
+        double frontRightPower = Range.clip(drive - turn - strafe, -1.0, 1.0) * 0.6;
+        double backLeftPower = Range.clip(drive + turn - strafe, -1.0, 1.0) * 0.6;
+        double backRightPower = Range.clip(drive - turn + strafe, -1.0, 1.0) * 0.6;
 
         // Tank Mode uses one stick to control each wheel.
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
@@ -133,8 +119,13 @@ public class Drive extends OpMode
         BackLeft.setPower(backLeftPower);
         FrontRight.setPower(frontRightPower);
         BackRight.setPower(backRightPower);
-        Slide.setPower(gamepad2.left_stick_y);
+        if (gamepad2.left_stick_y < 0) {
+            Slide.setPower(gamepad2.left_stick_y);
 
+        }
+        else {
+            Slide.setPower(gamepad2.left_stick_y*0.6 );
+        }
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
     }
